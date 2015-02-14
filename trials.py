@@ -27,18 +27,55 @@ class InstructionImage(pytrack.Trial.BasicTrial):
         self._bmp = pygame.image.load(filename)
         instruction = "stimuli/box%i.bmp" % box
         self._inst = pygame.image.load(instruction)
-        self.box = box
-        self.glove = glove
+        self._box = box
+        self._glove = glove
         self.delay = delay
         self.condition = condition
         self.gloveData = []
 
     def send_GloveData(self):
 
-        _tmp = self.glove.poll()
+        _tmp = self._glove.poll()
         for s, v in enumerate(_tmp):
             self._track.sendMessage("GLOVE%i %f" % (s, v))
             self.gloveData.append(_tmp)
+
+    def condition_match(self):
+
+        return self._glove.is_condition(self.condition)
+
+    def wait_for_box(self):
+        while True:
+            rb = int(ser.readline())
+            self.send_GloveData()
+            if rb == self._box:
+                self.hand_in_box = rb
+                break
+
+    def wait_for_gesture(self):
+
+        conditions = [False for x in range(20)]
+        samples = len(conditions)
+        cnt = 0
+        self.gesture_search = True
+
+        while True:
+            self.send_GloveData()
+            conditions[cnt % samples] = self.condition_match()
+            if all(conditions) is True:
+                self.gesture_confirmed = conditions[0]
+                break
+            pygame.display.flip()
+            cnt += 1
+
+    def delay(self):
+
+        if self.delay:
+            self.delay_start
+            for x in range(120):
+                self.send_GloveData()
+                pygame.display.flip()
+            self.delay_end
 
     def run(self, duration=10000):
         surf = self._disp.get_surface()
@@ -48,35 +85,9 @@ class InstructionImage(pytrack.Trial.BasicTrial):
         surf.blit(self._inst, (0, 0))
         pygame.display.flip()
 
-        while True:
-            rb = int(ser.readline())
-            self.send_GloveData()
-            if rb == self.box:
-                self.hand_in_box = rb
-                self._track.sendMessage("BOX %i" % (rb))
-                break
-
-        conditions = [False for x in range(20)]
-        samples = len(conditions)
-        cnt = 0
-        
-        self.gesture_search = True
-        while True:
-            self.send_GloveData()
-            conditions[cnt % samples] = self.glove.is_condition(self.condition)
-            if all(conditions) is True:
-                self.gesture_confirmed = conditions[0]
-                break
-            pygame.display.flip()
-            cnt += 1
-
-        if self.delay:
-            self.delay_start
-            self._track.sendMessage("Delay 1s")
-            for x in range(60):
-                self.send_GloveData()
-                pygame.display.flip()
-            self.delay_end
+        self.wait_for_box()
+        self.wait_for_gesture()
+        self.delay()
 
         surf.blit(self._bmp, (0, 0))
         pygame.display.flip()
