@@ -161,6 +161,7 @@ class DataGlove:
                                                        background, ok, 10))
 
         pygame.quit()
+
         hand_max = [0 for y in range(5)]
 
         for i in range(len(hand_flat)):

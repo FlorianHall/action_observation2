@@ -31,12 +31,14 @@ class InstructionImage(pytrack.Trial.BasicTrial):
         self.glove = glove
         self.delay = delay
         self.condition = condition
+        self.gloveData = []
 
     def send_GloveData(self):
 
         _tmp = self.glove.poll()
         for s, v in enumerate(_tmp):
             self._track.sendMessage("GLOVE%i %f" % (s, v))
+            self.gloveData.append(_tmp)
 
     def run(self, duration=10000):
         surf = self._disp.get_surface()
@@ -50,28 +52,35 @@ class InstructionImage(pytrack.Trial.BasicTrial):
             rb = int(ser.readline())
             self.send_GloveData()
             if rb == self.box:
+                self.hand_in_box = rb
                 self._track.sendMessage("BOX %i" % (rb))
                 break
 
-        conditions = [False for x in range(10)]
+        conditions = [False for x in range(20)]
+        samples = len(conditions)
         cnt = 0
-
+        
+        self.gesture_search = True
         while True:
             self.send_GloveData()
-            conditions[cnt % 10] = self.glove.is_condition(self.condition)
+            conditions[cnt % samples] = self.glove.is_condition(self.condition)
             if all(conditions) is True:
+                self.gesture_confirmed = conditions[0]
                 break
             pygame.display.flip()
             cnt += 1
 
         if self.delay:
+            self.delay_start
             self._track.sendMessage("Delay 1s")
             for x in range(60):
                 self.send_GloveData()
                 pygame.display.flip()
+            self.delay_end
 
         surf.blit(self._bmp, (0, 0))
         pygame.display.flip()
+        self.image_shown = True
         target = pylink.currentTime()
         self._track.sendMessage("SYNCTIME %d" % (target - start))
         target = pylink.currentTime()
