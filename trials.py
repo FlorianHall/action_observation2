@@ -21,8 +21,7 @@ ser = serial.Serial('/dev/ttyACM0')
 
 class InstructionImage(pytrack.Trial.BasicTrial):
 
-    def __init__(self, disp, track, filename, box,
-                 delay, glove, condition, gloveData):
+    def __init__(self, disp, track, filename, box, delay, glove, condition):
 
         pytrack.Trial.BasicTrial.__init__(self, disp, track, filename)
         self._bmp = pygame.image.load(filename)
@@ -32,14 +31,12 @@ class InstructionImage(pytrack.Trial.BasicTrial):
         self._glove = glove
         self.delay = delay
         self.condition = condition
-        self.gloveData = gloveData
 
     def send_GloveData(self):
 
         _tmp = self._glove.poll()
         for s, v in enumerate(_tmp):
             self._track.sendMessage("GLOVE%i %f" % (s, v))
-            self.gloveData.append(_tmp)
 
     def condition_match(self):
 
@@ -95,6 +92,8 @@ class InstructionImage(pytrack.Trial.BasicTrial):
         surf.blit(self._bmp, (0, 0))
         pygame.display.flip()
         self.image_shown = True
+
+# Warum 2 mal target? SYNCTIME immer 0!!!!
         target = pylink.currentTime()
         self._track.sendMessage("SYNCTIME %d" % (target - start))
         target = pylink.currentTime()

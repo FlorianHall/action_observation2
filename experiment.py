@@ -69,9 +69,8 @@ try:
                     T.run(6000)
                     break
 
-    # if you want only one block
-        if i > 6:
-            break
+        # if you want only one block
+        break
 finally:
     # whatever happens:
     # we shutdown the display
