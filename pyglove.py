@@ -141,7 +141,7 @@ class DataGlove:
         hand_mug = []
         hand_pen = []
 
-        trials = 30
+        trials = 2
         rng_trial = range(1, 5)
 
         for trial in range(0, trials):

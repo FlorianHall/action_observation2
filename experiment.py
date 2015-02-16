@@ -52,10 +52,11 @@ try:
             print i, t
             t['box'] = box_mapping[t['condition']]
             track.trial(i, t)
+            gloveData = []
             T = trials.InstructionImage(disp, track,
                                         "stimuli/%i.bmp" % t['image'],
                                         t['box'], t['delay'], glove,
-                                        t['condition'])
+                                        t['condition'], gloveData)
             track.drift()
             # try to run trial. If error occurs wait 1 sec and try again
             for n in range(1, 20):
@@ -69,7 +70,8 @@ try:
                     break
 
     # if you want only one block
-        break
+        if i > 6:
+            break
 finally:
     # whatever happens:
     # we shutdown the display

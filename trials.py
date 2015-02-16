@@ -21,7 +21,8 @@ ser = serial.Serial('/dev/ttyACM0')
 
 class InstructionImage(pytrack.Trial.BasicTrial):
 
-    def __init__(self, disp, track, filename, box, delay, glove, condition):
+    def __init__(self, disp, track, filename, box,
+                 delay, glove, condition, gloveData):
 
         pytrack.Trial.BasicTrial.__init__(self, disp, track, filename)
         self._bmp = pygame.image.load(filename)
@@ -31,7 +32,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
         self._glove = glove
         self.delay = delay
         self.condition = condition
-        self.gloveData = []
+        self.gloveData = gloveData
 
     def send_GloveData(self):
 
