@@ -68,7 +68,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
             pygame.display.flip()
             cnt += 1
 
-    def delay(self):
+    def start_delay(self):
 
         if self.delay:
             self.delay_start
@@ -87,7 +87,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
 
         self.wait_for_box()
         self.wait_for_gesture()
-        self.delay()
+        self.start_delay()
 
         surf.blit(self._bmp, (0, 0))
         pygame.display.flip()
