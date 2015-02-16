@@ -75,7 +75,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
             for x in range(120):
                 self.send_GloveData()
                 pygame.display.flip()
-            self.delay_end
+            self.delay_end = True
         else:
             self.delay_start = False
 
