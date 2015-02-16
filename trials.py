@@ -71,11 +71,13 @@ class InstructionImage(pytrack.Trial.BasicTrial):
     def start_delay(self):
 
         if self.delay:
-            self.delay_start
+            self.delay_start = True
             for x in range(120):
                 self.send_GloveData()
                 pygame.display.flip()
             self.delay_end
+        else:
+            self.delay_start = False
 
     def run(self, duration=10000):
         surf = self._disp.get_surface()
