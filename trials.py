@@ -31,37 +31,39 @@ class InstructionImage(pytrack.Trial.BasicTrial):
         self._glove = glove
         self.delay = delay
         self.condition = condition
+        self.glove_cnt = 0
 
     def send_GloveData(self):
 
         _tmp = self._glove.poll()
-        for s, v in enumerate(_tmp):
-            self._track.sendMessage("GLOVE%i %f" % (s, v))
+        self._track.sendMessage("GLOVE %i %1.3f %1.3f %1.3f %1.3f %1.3f" % (self.glove_cnt, _tmp[0], _tmp[1],_tmp[2] ,_tmp[3], _tmp[4] ))
+        self.glove_cnt += 1
 
     def condition_match(self):
 
         return self._glove.is_condition(self.condition)
 
     def wait_for_box(self):
+
         while True:
             rb = int(ser.readline())
             self.send_GloveData()
             if rb == self._box:
-                self.hand_in_box = rb
+                self._track.sendMessage("Hand_in_box %i" % (rb))
                 break
+            pygame.display.flip()
 
     def wait_for_gesture(self):
 
         conditions = [False for x in range(20)]
         samples = len(conditions)
         cnt = 0
-        self.gesture_search = True
 
         while True:
             self.send_GloveData()
             conditions[cnt % samples] = self.condition_match()
             if all(conditions) is True:
-                self.gesture_confirmed = conditions[0]
+                self._track.sendMessage("Condition %s" % (self.condition))
                 break
             pygame.display.flip()
             cnt += 1
@@ -69,13 +71,14 @@ class InstructionImage(pytrack.Trial.BasicTrial):
     def start_delay(self):
 
         if self.delay:
-            self.delay_start = True
+            self._track.sendMessage("start_delay 1")
             for x in range(120):
                 self.send_GloveData()
                 pygame.display.flip()
-            self.delay_end = True
+            self._track.sendMessage("stop_delay 1")
         else:
-            self.delay_start = False
+            self._track.sendMessage("start_delay 0")
+            self._track.sendMessage("stop_delay 0")
 
     def run(self, duration=10000):
         surf = self._disp.get_surface()
@@ -91,9 +94,8 @@ class InstructionImage(pytrack.Trial.BasicTrial):
 
         surf.blit(self._bmp, (0, 0))
         pygame.display.flip()
-        self.image_shown = True
+        self._track.sendMessage("GLOVE%i %f" % (s, v))
 
-# Warum 2 mal target? SYNCTIME immer 0!!!!
         target = pylink.currentTime()
         self._track.sendMessage("SYNCTIME %d" % (target - start))
         target = pylink.currentTime()
