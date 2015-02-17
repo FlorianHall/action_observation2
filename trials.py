@@ -36,7 +36,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
     def send_GloveData(self):
 
         _tmp = self._glove.poll()
-        self._track.sendMessage("GLOVE %i %1.3f %1.3f %1.3f %1.3f %1.3f" % (self.glove_cnt, _tmp[0], _tmp[1],_tmp[2] ,_tmp[3], _tmp[4] ))
+        self._track.sendMessage("Glove %1.4f %1.4f %1.4f %1.4f %1.4f" % (self.glove_cnt, _tmp[0], _tmp[1],_tmp[2] ,_tmp[3], _tmp[4] ))
         self.glove_cnt += 1
 
     def condition_match(self):
