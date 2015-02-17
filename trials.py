@@ -16,7 +16,7 @@ BINOCULAR = 2
 # Show eye trace?
 show_eyes = False
 
-ser = serial.Serial('/dev/ttyACM0')
+ser = serial.Serial('/dev/ttyACM0', timeout = 0)
 
 
 class InstructionImage(pytrack.Trial.BasicTrial):
