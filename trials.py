@@ -63,7 +63,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
             self.send_GloveData()
             conditions[cnt % samples] = self.condition_match()
             if all(conditions) is True:
-                self._track.sendMessage("Condition %s" % (self.condition))
+                self._track.sendMessage("Gesture %s" % (self.condition))
                 break
             pygame.display.flip()
             cnt += 1
@@ -71,14 +71,14 @@ class InstructionImage(pytrack.Trial.BasicTrial):
     def start_delay(self):
 
         if self.delay:
-            self._track.sendMessage("start_delay 1")
+            self._track.sendMessage("Start_delay 1")
             for x in range(120):
                 self.send_GloveData()
                 pygame.display.flip()
-            self._track.sendMessage("stop_delay 1")
+            self._track.sendMessage("Stop_delay 1")
         else:
-            self._track.sendMessage("start_delay 0")
-            self._track.sendMessage("stop_delay 0")
+            self._track.sendMessage("Start_delay 0")
+            self._track.sendMessage("Stop_delay 0")
 
     def run(self, duration=10000):
         surf = self._disp.get_surface()
@@ -94,7 +94,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
 
         surf.blit(self._bmp, (0, 0))
         pygame.display.flip()
-        self._track.sendMessage("GLOVE%i %f" % (s, v))
+        self._track.sendMessage("Image_shown 1")
 
         target = pylink.currentTime()
         self._track.sendMessage("SYNCTIME %d" % (target - start))

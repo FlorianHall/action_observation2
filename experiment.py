@@ -56,7 +56,7 @@ try:
             T = trials.InstructionImage(disp, track,
                                         "stimuli/%i.bmp" % t['image'],
                                         t['box'], t['delay'], glove,
-                                        t['condition'], gloveData)
+                                        t['condition'])
             track.drift()
             # try to run trial. If error occurs wait 1 sec and try again
             for n in range(1, 20):
