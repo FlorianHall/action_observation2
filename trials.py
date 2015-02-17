@@ -47,7 +47,12 @@ class InstructionImage(pytrack.Trial.BasicTrial):
 
         while True:
             self.send_GloveData()
-            rb = int(ser.readline())
+            try:
+                rb = int(ser.readline())
+            except ValueError:
+                rb = 0
+                pass
+
             if rb == self._box:
                 self._track.sendMessage("Hand_in_box %i" % (rb))
                 break
