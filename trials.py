@@ -16,7 +16,7 @@ BINOCULAR = 2
 # Show eye trace?
 show_eyes = False
 
-ser = serial.Serial('/dev/ttyACM0', timeout = 0)
+ser = serial.Serial('/dev/ttyACM0', timeout=0)
 
 
 class InstructionImage(pytrack.Trial.BasicTrial):
@@ -31,13 +31,11 @@ class InstructionImage(pytrack.Trial.BasicTrial):
         self._glove = glove
         self.delay = delay
         self.condition = condition
-        self.glove_cnt = 0
 
     def send_GloveData(self):
 
         _tmp = self._glove.poll()
-        self._track.sendMessage("Glove %i %1.4f %1.4f %1.4f %1.4f %1.4f" % (self.glove_cnt, _tmp[0], _tmp[1],_tmp[2] ,_tmp[3], _tmp[4] ))
-        self.glove_cnt += 1
+        self._track.sendMessage("Glove %1.4f %1.4f %1.4f %1.4f %1.4f" % (_tmp[0], _tmp[1],_tmp[2] ,_tmp[3], _tmp[4] ))
 
     def condition_match(self):
 
@@ -76,11 +74,10 @@ class InstructionImage(pytrack.Trial.BasicTrial):
     def start_delay(self):
 
         if self.delay:
-            self._track.sendMessage("Start_delay 1")
-            for x in range(120):
-                self.send_GloveData()
-                pygame.display.flip()
+            time = pylink.currentTime() + 2000
             self._track.sendMessage("Stop_delay 1")
+            while pylink.currentTime() < time:
+                pass
         else:
             self._track.sendMessage("Start_delay 0")
             self._track.sendMessage("Stop_delay 0")
