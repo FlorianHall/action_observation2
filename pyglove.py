@@ -3,7 +3,7 @@ import time
 import random
 import pygame
 from sklearn import svm
-import numpy as np
+# import numpy as np
 
 mapping = {'setup': '_Z5setupv', 'poll': '_Z4polli',
            'poll_raw': '_Z8poll_rawi',
@@ -45,7 +45,8 @@ class DataGlove:
         self.glove_id = self.lib[mapping['setup']]('')
 
         if not self.glove_id:
-            print "Glove failed to initialize, check access rigths!"
+            print "bla"
+#            raise RuntimeError('Glove failed to initialize!')
         else:
             print "Glove initialized"
 
@@ -56,43 +57,65 @@ class DataGlove:
         """
         return self.lib[mapping[key]]
 
-    def record_single(self, img, screen, background, ok, _time):
+    def show_img(self, img):
+
+        self.background.fill((250, 250, 250))
+        imgpos = img.get_rect()
+        imgpos.center = self.screen.get_rect().center
+        self.screen.blit(self.background, (0, 0))
+        self.screen.blit(img, imgpos)
+        pygame.display.flip()
+
+    def show_start(self):
+
+        self.background.fill((250, 250, 250))
+        imgpos = self.start.get_rect()
+        imgpos.center = self.screen.get_rect().center
+        self.screen.blit(self.background, (0, 0))
+        self.screen.blit(self.start, imgpos)
+        pygame.display.flip()
+
+    def record(self, ind):
 
         _a = [0 for x in range(5)]
 
-        background.fill((250, 250, 250))
-        imgpos = img.get_rect()
-        imgpos.center = screen.get_rect().center
-        screen.blit(background, (0, 0))
-        screen.blit(img, imgpos)
-        pygame.display.flip()
+        for x in range(10):
+            _tmp = self.poll_raw()
 
-        running = True
-        # main loop
-        while running:
-            # event handling, gets all event from the eventqueue
-            for event in pygame.event.get():
-                # only do something if the event is of type QUIT
-                if event.type == pygame.KEYUP:
-                    if (event.key == pygame.K_RETURN):
-                        for x in range(_time):
-                            _tmp = self.poll_raw()
-                            for y in range(len(_a)):
-                                _a[y] = _tmp[y] + _a[y]
-                            time.sleep(0.1)
-                        for y in range(len(_a)):
-                            _a[y] = _a[y]/_time
-                    screen.blit(ok, imgpos)
-                    pygame.display.flip()
-                    time.sleep(0.06)
-                    running = False
+            for y in range(len(_a)):
+                _a[y] = _tmp[y] + _a[y]
 
-                if event.type == pygame.QUIT:
-                    # change the value to False, to exit the main loop
-                    running = False
-                    pygame.quit()
-                    # return
-        return _a
+            time.sleep(0.1)
+
+        for y in range(len(_a)):
+            _a[y] = _a[y]/10
+
+        if self.trials[ind] == 0:
+            self.flat.append(_a)
+        if self.trials[ind] == 1:
+            self.fist.append(_a)
+        if self.trials[ind] == 2:
+            self.pen.append(_a)
+        if self.trials[ind] == 3:
+            self.mug.append(_a)
+
+    def correct(self):
+
+        if self.ind <= 0:
+            return
+
+        ind = self.ind - 1
+
+        if self.trials[ind] == 0:
+            self.flat.pop()
+        if self.trials[ind] == 1:
+            self.fist.pop()
+        if self.trials[ind] == 2:
+            self.pen.pop()
+        if self.trials[ind] == 3:
+            self.mug.pop()
+
+        self.ind = ind
 
     def calibrate(self):
         """
@@ -100,89 +123,107 @@ class DataGlove:
         """
         pygame.init()
 
-        screen = pygame.display.set_mode((1920, 1080))
+        self.flat = []
+        self.fist = []
+        self.pen = []
+        self.mug = []
+        self.screen = pygame.display.set_mode((1920, 1080))
         pygame.display.toggle_fullscreen()
-        start = pygame.image.load("start.bmp")
+        self.start = pygame.image.load("start.bmp")
         flat = pygame.image.load("flat.bmp")
         fist = pygame.image.load("fist.bmp")
         pen = pygame.image.load("pen.bmp")
         mug = pygame.image.load("mug.bmp")
         ok = pygame.image.load("ok.bmp")
         ok = pygame.transform.scale(ok, (400, 250))
+        screens = [flat, fist, pen, mug]
 
-        background = pygame.Surface(screen.get_size())
-        background = background.convert()
-        background.fill((250, 250, 250))
+        self.background = pygame.Surface(self.screen.get_size())
+        self.background = self.background.convert()
+        self.background.fill((250, 250, 250))
 
-        imagepos = start.get_rect()
-        background.blit(start, imagepos)
+        imagepos = self.start.get_rect()
+        self.background.blit(self.start, imagepos)
 
-        screen.blit(background, (0, 0))
+        self.screen.blit(self.background, (0, 0))
         pygame.display.flip()
 
+        trials_nr = 30
+        rng_trial = range(4)
+        self.trials = []
+
+        for trial in range(trials_nr):
+
+            random.shuffle(rng_trial)
+            self.trials.extend(rng_trial)
+
         running = True
-        # main loop
+
         while running:
-            # event handling, gets all event from the eventqueue
+            self.show_start()
+
             for event in pygame.event.get():
-                # only do something if the event is of type QUIT
+
                 if event.type == pygame.KEYUP:
-                    if (event.key == pygame.K_RETURN):
+
+                    if event.key == pygame.K_RETURN:
                         running = False
 
+        self.ind = 0
+        running = True
+
+        while running:
+            self.show_img(screens[self.trials[self.ind]])
+
+            for event in pygame.event.get():
+
+                if event.type == pygame.KEYUP:
+
+                    if event.key == pygame.K_RETURN:
+
+                        if self.ind > len(self.trials):
+                            running = False
+                            pygame.quit()
+
+                        self.record(self.ind)
+                        self.show_img(ok)
+                        time.sleep(0.3)
+                        self.ind += 1
+
+                    if event.key == pygame.K_ESCAPE:
+                        running = False
+                        pygame.quit()
+
+                    if event.key == pygame.K_c:
+                        self.correct()
+
                 if event.type == pygame.QUIT:
-                    # change the value to False, to exit the main loop
                     running = False
                     pygame.quit()
-                    # return
-
-        hand_flat = []
-        hand_fist = []
-        hand_mug = []
-        hand_pen = []
-
-        trials = 3
-        rng_trial = range(1, 5)
-
-        for trial in range(0, trials):
-            random.shuffle(rng_trial)
-            for y in rng_trial:
-                if y == 1:
-                    hand_flat.append(self.record_single(flat, screen,
-                                                        background, ok, 10))
-                if y == 2:
-                    hand_fist.append(self.record_single(fist, screen,
-                                                        background, ok, 10))
-                if y == 3:
-                    hand_pen.append(self.record_single(pen, screen,
-                                                       background, ok, 10))
-                if y == 4:
-                    hand_mug.append(self.record_single(mug, screen,
-                                                       background, ok, 10))
 
         pygame.quit()
 
-        hand_max = [0 for y in range(5)]
+        self.max = [0 for y in range(5)]
 
-        for i in range(len(hand_flat)):
+        for i in range(len(self.flat)):
             for y in range(5):
-                for condition in [hand_fist, hand_flat, hand_pen, hand_mug]:
-                    if condition[i][y] > hand_max[y]:
-                        hand_max[y] = condition[i][y]
+                for condition in [self.fist,
+                                  self.flat,
+                                  self.pen,
+                                  self.mug]:
+                    if condition[i][y] > self.max[y]:
+                        self.max[y] = condition[i][y]
 
-        hand_min = [5000 for y in range(5)]
-        for i in range(len(hand_flat)):
+        self.min = [5000 for y in range(5)]
+        for i in range(len(self.flat)):
             for y in range(5):
-                for condition in [hand_fist, hand_flat, hand_pen, hand_mug]:
-                    if condition[i][y] < hand_min[y]:
-                        hand_min[y] = condition[i][y]
+                for condition in [self.fist,
+                                  self.flat,
+                                  self.pen,
+                                  self.mug]:
+                    if condition[i][y] < self.min[y]:
+                        self.min[y] = condition[i][y]
 
-        self.min = hand_min
-        self.max = hand_max
-        self.flat = hand_flat
-        self.fist = hand_fist
-        self.pen = hand_pen
-        self.mug = hand_mug
         self.calibrated = True
 
     def poll_buildIn_calibrated(self):

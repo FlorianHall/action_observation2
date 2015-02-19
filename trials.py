@@ -83,7 +83,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
 
         if self.delay:
             self._track.sendMessage("Start_delay 1")
-            self.wait(2000)
+            self.wait(1500)
             self._track.sendMessage("Stop_delay 1")
         else:
             self._track.sendMessage("Start_delay 0")
@@ -131,10 +131,16 @@ class Break(pytrack.Trial.BasicTrial):
         surf.blit(self._bmp, (0, 0))
         pygame.display.flip()
         running = True
+        calibrate = False
 
         while running:
             for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
+                    if event.type == pygame.KEYUP:
                         if event.key == pygame.K_c:
+                            calibrate = True
                             running = False
-        self._track.setup()
+                        if event.key == pygame.K_RETURN:
+                            running = False
+
+        if calibrate:
+            self._track.setup()
