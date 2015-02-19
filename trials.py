@@ -123,7 +123,7 @@ class Break(pytrack.Trial.BasicTrial):
 
     def __init__(self, disp, track):
         self._disp = disp
-        self._bmp = pygame.image.load(_break.bmp)
+        self._bmp = pygame.image.load("_break.bmp")
         self._track = track
 
     def run(self):
