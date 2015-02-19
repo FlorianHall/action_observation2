@@ -10,10 +10,25 @@ import os
 import cPickle
 import pyglove
 
+box = 1
+box_mapping = {'precision': 1, 'neutral': 2, 'power': 3}
+# box_mapping = {'power':1, 'neutral':2, 'precision':3}
+
+def change_boxmapping():
+
+    if box is 1:
+
+        box_mapping = {'power': 1, 'neutral': 2, 'precision': 3}
+        box = 2
+
+    if box is 2:
+
+        box_mapping = {'precision': 1, 'neutral': 2, 'power': 3}
+        box = 1
+
 glove = pyglove.DataGlove()
 glove.calibrate()
 glove.train()
-
 
 # Ask user for index of current subject
 sel = Dialog.Int("Subject Index")
@@ -35,13 +50,7 @@ track.metadata("SUBJECTINDEX", sel)
 # Calibration
 track.setup()
 
-box_mapping = {'precision': 1, 'neutral': 2, 'power': 3}
-# box_mapping = {'power':1, 'neutral':2, 'precision':3}
-
-
-# enumerate all trials:
-# i runs from 0 to number of trials-1
-# t is the trial description from the matlab file
+B = trials.Break(disp, track)
 
 try:
 
@@ -69,8 +78,9 @@ try:
                     T.run(6000)
                     break
 
-        # if you want only one block
-        break
+        change_boxmapping()
+        B.run()
+
 finally:
     # whatever happens:
     # we shutdown the display

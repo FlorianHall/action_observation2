@@ -58,7 +58,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
 
     def wait_for_gesture(self):
 
-        conditions = [False for x in range(30)]
+        conditions = [False for x in range(20)]
         samples = len(conditions)
         cnt = 0
 
@@ -68,21 +68,29 @@ class InstructionImage(pytrack.Trial.BasicTrial):
             if all(conditions) is True:
                 self._track.sendMessage("Gesture %s" % (self.condition))
                 break
-            pygame.display.flip()
+            self.wait(25)
             cnt += 1
+
+    def wait(self, sec):
+
+        time = pylink.currentTime() + sec
+        while pylink.currentTime() < time:
+            self.send_GloveData()
+            pygame.display.flip()
+            pass
 
     def start_delay(self):
 
         if self.delay:
-            time = pylink.currentTime() + 2000
+            self._track.sendMessage("Start_delay 1")
+            self.wait(2000)
             self._track.sendMessage("Stop_delay 1")
-            while pylink.currentTime() < time:
-                pass
         else:
             self._track.sendMessage("Start_delay 0")
             self._track.sendMessage("Stop_delay 0")
 
     def run(self, duration=10000):
+
         surf = self._disp.get_surface()
         ser.flushInput()
         self._track.start_trial()
@@ -113,23 +121,20 @@ class InstructionImage(pytrack.Trial.BasicTrial):
 
 class Break(pytrack.Trial.BasicTrial):
 
-    def __init__(self, track, filename):
-        pytrack.Trial.BasicTrial.__init__(self, None, track, filename)
-        self._bmp = pygame.image.load(filename)
+    def __init__(self, disp, track):
+        self._disp = disp
+        self._bmp = pygame.image.load(_break.bmp)
+        self._track = track
 
-    def run(self, duration=10000000):
-        duration = 10000000000
-        surf = pygame.display.get_surface()
-        self._track.start_trial()
-        start = pylink.currentTime()
+    def run(self):
+        surf = self._disp.get_surface()
         surf.blit(self._bmp, (0, 0))
         pygame.display.flip()
-        target = pylink.currentTime()
-        self._track.sendMessage("SYNCTIME %d" % (target-start))
-        target += duration
-        while self._track.recording() and pylink.currentTime() < target:
+        running = True
+
+        while running:
             for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_c:
-                        self._track.end_trial()
-                        return
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_c:
+                            running = False
+        self._track.setup()
