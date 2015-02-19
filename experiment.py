@@ -14,17 +14,20 @@ box = 1
 box_mapping = {'precision': 1, 'neutral': 2, 'power': 3}
 # box_mapping = {'power':1, 'neutral':2, 'precision':3}
 
-def change_boxmapping():
 
-    if box is 1:
+def change_boxmapping(box):
+
+    if box == 1:
 
         box_mapping = {'power': 1, 'neutral': 2, 'precision': 3}
         box = 2
+        return box, box_mapping
 
-    if box is 2:
+    if box == 2:
 
         box_mapping = {'precision': 1, 'neutral': 2, 'power': 3}
         box = 1
+        return box, box_mapping
 
 glove = pyglove.DataGlove()
 glove.calibrate()
@@ -78,7 +81,7 @@ try:
                     T.run(6000)
                     break
 
-        change_boxmapping()
+        box, box_mapping = change_boxmapping(box)
         B.run()
 
 finally:
