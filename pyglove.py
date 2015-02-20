@@ -3,7 +3,7 @@ import time
 import random
 import pygame
 from sklearn import svm
-# import numpy as np
+import numpy as np
 
 mapping = {'setup': '_Z5setupv', 'poll': '_Z4polli',
            'poll_raw': '_Z8poll_rawi',
@@ -38,15 +38,13 @@ class DataGlove:
         self.fist = []
         self.pen = []
         self.mug = []
-        self.pca = None
         self.svm = False
         self.recording = False
         self.lib = ctypes.CDLL('glove.so')
         self.glove_id = self.lib[mapping['setup']]('')
 
         if not self.glove_id:
-            print "bla"
-#            raise RuntimeError('Glove failed to initialize!')
+            raise RuntimeError('Glove failed to initialize!')
         else:
             print "Glove initialized"
 
@@ -75,7 +73,7 @@ class DataGlove:
         self.screen.blit(self.start, imgpos)
         pygame.display.flip()
 
-    def record(self, ind):
+    def record(self):
 
         _a = [0 for x in range(5)]
 
@@ -90,13 +88,13 @@ class DataGlove:
         for y in range(len(_a)):
             _a[y] = _a[y]/10
 
-        if self.trials[ind] == 0:
+        if self.trials[self.ind] == 0:
             self.flat.append(_a)
-        if self.trials[ind] == 1:
+        if self.trials[self.ind] == 1:
             self.fist.append(_a)
-        if self.trials[ind] == 2:
+        if self.trials[self.ind] == 2:
             self.pen.append(_a)
-        if self.trials[ind] == 3:
+        if self.trials[self.ind] == 3:
             self.mug.append(_a)
 
     def correct(self):
@@ -128,7 +126,7 @@ class DataGlove:
         self.pen = []
         self.mug = []
         self.screen = pygame.display.set_mode((1920, 1080))
-        pygame.display.toggle_fullscreen()
+#        pygame.display.toggle_fullscreen()
         self.start = pygame.image.load("start.bmp")
         flat = pygame.image.load("flat.bmp")
         fist = pygame.image.load("fist.bmp")
@@ -173,6 +171,7 @@ class DataGlove:
         running = True
 
         while running:
+
             self.show_img(screens[self.trials[self.ind]])
 
             for event in pygame.event.get():
@@ -181,14 +180,13 @@ class DataGlove:
 
                     if event.key == pygame.K_RETURN:
 
-                        if self.ind > len(self.trials):
-                            running = False
-                            pygame.quit()
-
-                        self.record(self.ind)
+                        self.record()
                         self.show_img(ok)
                         time.sleep(0.3)
                         self.ind += 1
+
+                        if self.ind == len(self.trials):
+                            running = False
 
                     if event.key == pygame.K_ESCAPE:
                         running = False
@@ -204,7 +202,6 @@ class DataGlove:
         pygame.quit()
 
         self.max = [0 for y in range(5)]
-
         for i in range(len(self.flat)):
             for y in range(5):
                 for condition in [self.fist,
