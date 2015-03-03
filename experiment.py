@@ -43,8 +43,8 @@ glove.train()
 disp = Display((1920, 1080))
 track = Tracker(disp, filename)
 
-eyelink.sendCommand("screen_phys_coords = -266, 149, 266, -149")
-eyelink.sendCommand("screen_pixel_coords = 0.0, 0.0, 1920.0, 1080.0")
+#eyelink.sendCommand("screen_phys_coords = -266, 149, 266, -149")
+#eyelink.sendCommand("screen_pixel_coords = 0.0, 0.0, 1920.0, 1080.0")
 
 # Send subject index as metadata to EDF
 track.metadata("SUBJECTINDEX", sel)
