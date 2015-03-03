@@ -145,16 +145,16 @@ class DataGlove:
         ind = self.ind - 1
 
         if self.trials[ind] == 0:
-            for x in range(5):
+            for x in range(10):
                 self.flat.pop()
         if self.trials[ind] == 1:
-            for x in range(5):
+            for x in range(10):
                 self.fist.pop()
         if self.trials[ind] == 2:
-            for x in range(5):
+            for x in range(10):
                 self.pen.pop()
         if self.trials[ind] == 3:
-            for x in range(5):
+            for x in range(10):
                 self.mug.pop()
 
         self.ind = ind
