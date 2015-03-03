@@ -121,7 +121,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
                 running = False
 
             if self.condition_match():
-                if hand_in_box():
+                if self.hand_in_box():
                     self.gesture_cnt += 1
                     print self.gesture_cnt
             if not self.condition_match():
