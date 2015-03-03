@@ -108,6 +108,11 @@ class InstructionImage(pytrack.Trial.BasicTrial):
 
         while running:
 
+            for event in pygame.event.get():
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_RETURN:
+                        running = False
+                        self._track.end_trial()
             self.send_GloveData()
             if self.gesture_cnt >= 12:
                 self._track.sendMessage("Gesture %s" % (self.condition))
