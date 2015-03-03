@@ -86,7 +86,7 @@ class DataGlove:
             time.sleep(0.1)
 
         for y in range(len(_a)):
-            _a[y] = _a[y]/10
+            _a[y] = _a[y] / float(10)
 
         if self.trials[self.ind] == 0:
             self.flat.append(_a)
@@ -96,6 +96,24 @@ class DataGlove:
             self.pen.append(_a)
         if self.trials[self.ind] == 3:
             self.mug.append(_a)
+
+    def record_all(self):
+
+        _a = []
+
+        for x in range(10):
+
+            _a.append(self.poll_raw())
+            time.sleep(0.1)
+
+        if self.trials[self.ind] == 0:
+            self.flat.extend(_a)
+        if self.trials[self.ind] == 1:
+            self.fist.extend(_a)
+        if self.trials[self.ind] == 2:
+            self.pen.extend(_a)
+        if self.trials[self.ind] == 3:
+            self.mug.extend(_a)
 
     def correct(self):
 
@@ -180,7 +198,7 @@ class DataGlove:
 
                     if event.key == pygame.K_RETURN:
 
-                        self.record()
+                        self.record_all()
                         self.show_img(ok)
                         time.sleep(0.3)
                         self.ind += 1

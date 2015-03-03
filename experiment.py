@@ -29,29 +29,36 @@ def change_boxmapping(box):
         box = 1
         return box, box_mapping
 
+# Initiate the glove
 glove = pyglove.DataGlove()
-glove.calibrate()
-glove.train()
 
 # Ask user for index of current subject
 sel = Dialog.Int("Subject Index")
 block_list = cPickle.load(open('rand/%i.rand' % sel))
 filename = Dialog.Str("EDF File:", "SUB%03d.EDF" % sel)
 
+# Setup the system
+disp = Display((1920, 1080))
+track = Tracker(disp, filename)
+
+#eyelink.sendCommand("screen_phys_coords = -266, 149, 266, -149")
+#eyelink.sendCommand("screen_pixel_coords = 0.0, 0.0, 1920.0, 1080.0")
+
+# Send subject index as metadata to EDF
+track.metadata("SUBJECTINDEX", sel)
+
+# Calibrate/train the glove
+glove.calibrate()
+glove.train()
+
+# Calibration (eyetracker)
+track.setup()
+
 # write glove calibration to files
 for x, y in zip([glove.min, glove.max, glove.fist,
                  glove.flat, glove.pen, glove.mug],
                 ['min', 'max', 'fist', 'flat', 'pen', 'mug']):
     cPickle.dump(x, open('gloveData/subject%03d/%s' % (sel, y), 'w'))
-
-# Setup the system
-disp = Display((1920, 1080))
-track = Tracker(disp, filename)
-
-# Send subject index as metadata to EDF
-track.metadata("SUBJECTINDEX", sel)
-# Calibration
-track.setup()
 
 B = trials.Break(disp, track)
 

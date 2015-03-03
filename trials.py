@@ -56,9 +56,22 @@ class InstructionImage(pytrack.Trial.BasicTrial):
                 break
             pygame.display.flip()
 
+    def hand_in_box(self):
+
+        try:
+            rb = int(ser.readline())
+        except ValueError:
+            rb = 0
+            pass
+
+        if rb == self._box:
+            return True
+        else:
+            return False
+
     def wait_for_gesture(self):
 
-        conditions = [False for x in range(20)]
+        conditions = [False for x in range(15)]
         samples = len(conditions)
         cnt = 0
 
@@ -66,8 +79,9 @@ class InstructionImage(pytrack.Trial.BasicTrial):
             self.send_GloveData()
             conditions[cnt % samples] = self.condition_match()
             if all(conditions) is True:
-                self._track.sendMessage("Gesture %s" % (self.condition))
-                break
+                if hand_in_box():
+                    self._track.sendMessage("Gesture %s" % (self.condition))
+                    break
             self.wait(25)
             cnt += 1
 
