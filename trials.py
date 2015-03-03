@@ -101,6 +101,25 @@ class InstructionImage(pytrack.Trial.BasicTrial):
             self.wait(25)
             return self.wait_for_gesture_v2(0, end)
 
+    def wait_for_gesture_v3(self):
+
+        self.gesture_cnt = 0
+
+        while True:
+
+            self.send_GloveData()
+            if self.gesture_cnt >= 15:
+                self._track.sendMessage("Gesture %s" % (self.condition))
+                return True
+
+            if self.hand_in_box():
+                if self.condition_match():
+                    self.gesture_cnt += 1
+                else:
+                    self.gesture_cnt = 0
+
+            self.wait(25)
+
     def wait(self, sec):
 
         time = pylink.currentTime() + sec
@@ -129,7 +148,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
         pygame.display.flip()
 
         self.wait_for_box()
-        self.wait_for_gesture_v2(0, 15)
+        self.wait_for_gesture_v3()
         self.start_delay()
 
         surf.blit(self._bmp, (0, 0))
