@@ -104,18 +104,19 @@ class InstructionImage(pytrack.Trial.BasicTrial):
     def wait_for_gesture_v3(self):
 
         self.gesture_cnt = 0
+        running = True
 
-        while True:
+        while running:
 
             self.send_GloveData()
-            if self.gesture_cnt >= 15:
+            if self.gesture_cnt >= 12:
                 self._track.sendMessage("Gesture %s" % (self.condition))
-                break
+                running = False
 
             if self.hand_in_box():
                 if self.condition_match():
                     self.gesture_cnt += 1
-                else:
+                if not self.condition_match():
                     self.gesture_cnt = 0
 
             self.wait(25)
