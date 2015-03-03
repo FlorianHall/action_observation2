@@ -110,7 +110,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
             self.send_GloveData()
             if self.gesture_cnt >= 15:
                 self._track.sendMessage("Gesture %s" % (self.condition))
-                return True
+                break
 
             if self.hand_in_box():
                 if self.condition_match():
