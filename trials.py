@@ -71,7 +71,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
 
     def wait_for_gesture(self):
 
-        conditions = [False for x in range(15)]
+        conditions = [False for x in range(10)]
         samples = len(conditions)
         cnt = 0
 
@@ -94,12 +94,12 @@ class InstructionImage(pytrack.Trial.BasicTrial):
             return True
 
         if self.condition_match():
-            if hand_in_box():
+            if self.hand_in_box():
                 self.wait(25)
-                self.wait_for_gesture_v2(ind + 1, end)
+                return self.wait_for_gesture_v2(ind + 1, end)
         else:
             self.wait(25)
-            self.wait_for_gesture_v2(0, end)
+            return self.wait_for_gesture_v2(0, end)
 
     def wait(self, sec):
 
