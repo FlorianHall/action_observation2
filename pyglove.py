@@ -99,6 +99,24 @@ class DataGlove:
 
         self.ind += 1
 
+    def correct(self):
+
+        if self.ind <= 0:
+            return
+
+        ind = self.ind - 1
+
+        if self.trials[ind] == 0:
+            self.flat.pop()
+        if self.trials[ind] == 1:
+            self.fist.pop()
+        if self.trials[ind] == 2:
+            self.pen.pop()
+        if self.trials[ind] == 3:
+            self.mug.pop()
+
+        self.ind = ind
+
     def record_all(self):
 
         _a = []
@@ -119,7 +137,7 @@ class DataGlove:
 
         self.ind += 1
 
-    def correct(self):
+    def correct_all(self):
 
         if self.ind <= 0:
             return
@@ -127,13 +145,17 @@ class DataGlove:
         ind = self.ind - 1
 
         if self.trials[ind] == 0:
-            self.flat.pop()
+            for x in range(5):
+                self.flat.pop()
         if self.trials[ind] == 1:
-            self.fist.pop()
+            for x in range(5):
+                self.fist.pop()
         if self.trials[ind] == 2:
-            self.pen.pop()
+            for x in range(5):
+                self.pen.pop()
         if self.trials[ind] == 3:
-            self.mug.pop()
+            for x in range(5):
+                self.mug.pop()
 
         self.ind = ind
 
@@ -214,7 +236,7 @@ class DataGlove:
                         pygame.quit()
 
                     if event.key == pygame.K_c:
-                        self.correct()
+                        self.correct_all()
 
                 if event.type == pygame.QUIT:
                     running = False
