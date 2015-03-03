@@ -66,7 +66,6 @@ try:
 
         for i, t in enumerate(trial_list):
             # announce the trial to the tracker
-            print i, t
             t['box'] = box_mapping[t['condition']]
             track.trial(i, t)
             gloveData = []

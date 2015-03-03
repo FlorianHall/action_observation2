@@ -113,16 +113,19 @@ class InstructionImage(pytrack.Trial.BasicTrial):
                     if event.key == pygame.K_RETURN:
                         running = False
                         self._track.end_trial()
+
             self.send_GloveData()
+
             if self.gesture_cnt >= 12:
                 self._track.sendMessage("Gesture %s" % (self.condition))
                 running = False
 
-            if self.hand_in_box():
-                if self.condition_match():
+            if self.condition_match():
+                if hand_in_box():
                     self.gesture_cnt += 1
-                if not self.condition_match():
-                    self.gesture_cnt = 0
+                    print self.gesture_cnt
+            if not self.condition_match():
+                self.gesture_cnt = 0
 
             self.wait(25)
 
