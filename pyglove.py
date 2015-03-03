@@ -97,6 +97,8 @@ class DataGlove:
         if self.trials[self.ind] == 3:
             self.mug.append(_a)
 
+        self.ind += 1
+
     def record_all(self):
 
         _a = []
@@ -114,6 +116,8 @@ class DataGlove:
             self.pen.extend(_a)
         if self.trials[self.ind] == 3:
             self.mug.extend(_a)
+
+        self.ind += 1
 
     def correct(self):
 
@@ -201,7 +205,6 @@ class DataGlove:
                         self.record_all()
                         self.show_img(ok)
                         time.sleep(0.3)
-                        self.ind += 1
 
                         if self.ind == len(self.trials):
                             running = False
