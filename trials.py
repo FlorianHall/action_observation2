@@ -112,7 +112,6 @@ class InstructionImage(pytrack.Trial.BasicTrial):
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_RETURN:
                         running = False
-                        self._track.end_trial()
 
             self.send_GloveData()
 
