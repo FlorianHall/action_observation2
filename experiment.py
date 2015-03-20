@@ -36,7 +36,8 @@ filename = Dialog.Str("EDF File:", "SUB%03d.EDF" % sel)
 
 # Initiate/calibrate/train the glove
 glove = pyglove.DataGlove()
-glove.calibrate()
+if not glove.use_cal_data():
+    glove.calibrate()
 glove.train()
 
 # Setup the system

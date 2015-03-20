@@ -353,5 +353,30 @@ class DataGlove:
 
         return calib
 
+    def use_cal_data(self, sub):
+
+        import cPickle
+
+        try:
+            for x in ['min', 'max', 'fist', 'flat', 'pen', 'mug']:
+                if x is 'min':
+                    self.min = cPickle.load(open('gloveData/subject%03d/%s' % (sub, x)))
+                if x is 'max':
+                    self.max = cPickle.load(open('gloveData/subject%03d/%s' % (sub, x)))
+                if x is 'fist':
+                    self.fist = cPickle.load(open('gloveData/subject%03d/%s' % (sub, x)))
+                if x is 'flat':
+                    self.flat = cPickle.load(open('gloveData/subject%03d/%s' % (sub, x)))
+                if x is 'pen':
+                    self.pen = cPickle.load(open('gloveData/subject%03d/%s' % (sub, x)))
+                if x is 'mug':
+                    self.mug = cPickle.load(open('gloveData/subject%03d/%s' % (sub, x)))
+
+            self.calibrated = True
+            return True
+
+        except IOError:
+            return False
+            
 if __name__ == '__main__':
     pass
