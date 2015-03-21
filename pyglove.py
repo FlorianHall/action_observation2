@@ -169,7 +169,7 @@ class DataGlove:
         self.fist = []
         self.pen = []
         self.mug = []
-        self.screen = pygame.display.set_mode((1920, 1080),pygame.NOFRAME)
+        self.screen = pygame.display.set_mode((1920, 1080), pygame.NOFRAME)
 #        pygame.display.toggle_fullscreen()
         self.start = pygame.image.load("start.bmp")
         flat = pygame.image.load("flat.bmp")
@@ -190,7 +190,7 @@ class DataGlove:
         self.screen.blit(self.background, (0, 0))
         pygame.display.flip()
 
-        trials_nr = 3
+        trials_nr = 30
         rng_trial = range(4)
         self.trials = []
 
@@ -311,7 +311,7 @@ class DataGlove:
 
         training_data = []
         for data in [self.flat, self.pen, self.mug, self.fist]:
-            training_data.append(normalize(data[:], self.min, self.max))
+            training_data.extend(normalize(data[:], self.min, self.max))
 
         training_classifier = []
         for x in range(0, len(training_data)/4):
