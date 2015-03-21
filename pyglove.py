@@ -55,18 +55,6 @@ class DataGlove:
         """
         return self.lib[mapping[key]]
 
-    def normalize(self, data):
-
-        tmp = []
-        total_output = []
-        max_minus_min = [k - j for k, j in zip(self.max, self.min)]
-
-        for i in data:
-            tmp = ([k - j for k, j in zip(i, self.min)])
-            tmp = [float(k) / float(j) for k, j in zip(tmp, max_minus_min)]
-            total_output.append(tmp)
-        return total_output
-
     def show_img(self, img):
 
         self.background.fill((250, 250, 250))
@@ -389,49 +377,6 @@ class DataGlove:
 
         except IOError:
             return False
-
-    def draw_pca_mean_and_now(self, draw_all_data, refresh_rate=0.0002):
-        import matplotlib as plt
-        from sklearn.decomposition import PCA
-        pca = PCA(n_components=2)
-        a = pca.fit(self.normalize(self.pen)+self.normalize(self.mug)
-                    + self.normalize(self.flat)
-                    + self.normalize(self.fist)).transform(self.normalize(self.pen)
-                                                           + self.normalize(self.mug)
-                                                           + self.normalize(self.flat)
-                                                           + self.normalize(self.fist))
-
-        target_precision_x = 0
-        target_power_x = 0
-        target_precision_y = 0
-        target_power_y = 0
-
-        target_precision_x = np.mean(a[:len(a)/4, 0])
-        target_precision_y = np.mean(a[:len(a)/4, 1])
-        target_power_x = np.mean(a[len(a)/4:2*len(a)/4, 0])
-        target_power_y = np.mean(a[len(a)/4:2*len(a)/4, 1])
-
-        try:
-            while True:
-
-                plt.clf()
-                plt.ion()
-                plt.plot(pca.transform(np.array(self.poll)[0, 0], pca.transform(np.array(self.poll()))[0,1], 'go'))        
-                plt.plot(target_precision_x, target_precision_y, 'ro', alpha = 0.5, markersize = 1)
-                plt.plot(target_power_x, target_power_y, 'bo', alpha = 0.5, markersize = 1)
-                plt.plot(target_precision_x, target_precision_y, 'ro', alpha = 0.5, markersize = 90)
-                plt.plot(target_power_x, target_power_y, 'bo', alpha = 0.5, markersize = 90)
-
-                if draw_all_data:
-                    plt.plot(a[:len(a)/4,0], a[:len(a)/4,1], 'ro', alpha = 0.1)
-                    plt.plot(a[len(a)/4:2*len(a)/4,0], a[len(a)/4:2*len(a)/4,1],'bo', alpha = 0.1)
-                    plt.plot(a[2*len(a)/4:3*len(a)/4,0], a[2*len(a)/4:3*len(a)/4,1], 'yo', alpha = 0.1)
-                    plt.plot(a[3*len(a)/4:,0], a[3*len(a)/4:,1],'go', alpha = 0.1) 
-                plt.axis([-1, 1, -1, 1])
-                plt.pause(refresh_rate)
-        except KeyboardInterrupt:
-            pass
-
 
 if __name__ == '__main__':
     pass
