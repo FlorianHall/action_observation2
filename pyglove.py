@@ -171,7 +171,7 @@ class DataGlove:
 
         self.ind = ind
 
-    def calibrate(self):
+    def calibrate(self, trials_nr=30):
         """
         Calibrates the glove to be able to use normalized output
         """
@@ -182,7 +182,6 @@ class DataGlove:
         self.pen = []
         self.mug = []
         self.screen = pygame.display.set_mode((1920, 1080), pygame.NOFRAME)
-#        pygame.display.toggle_fullscreen()
         self.start = pygame.image.load("start.bmp")
         flat = pygame.image.load("flat.bmp")
         fist = pygame.image.load("fist.bmp")
@@ -202,7 +201,6 @@ class DataGlove:
         self.screen.blit(self.background, (0, 0))
         pygame.display.flip()
 
-        trials_nr = 30
         rng_trial = range(4)
         self.trials = []
 
@@ -424,7 +422,7 @@ class DataGlove:
                     plt.plot(target_power_x, target_power_y, 'bo', alpha = 0.5, markersize = 1)
                     plt.plot(target_precision_x, target_precision_y, 'ro', alpha = 0.5, markersize = 90)
                     plt.plot(target_power_x, target_power_y, 'bo', alpha = 0.5, markersize = 90)
-        
+
                     if draw_all_data:
                         plt.plot(a[:len(a)/4,0], a[:len(a)/4,1], 'ro', alpha = 0.1)
                         plt.plot(a[len(a)/4:2*len(a)/4,0], a[len(a)/4:2*len(a)/4,1],'bo', alpha = 0.1)
