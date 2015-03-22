@@ -36,9 +36,9 @@ filename = Dialog.Str("EDF File:", "SUB%03d.EDF" % sel)
 
 # Initiate/calibrate/train the glove
 glove = pyglove.DataGlove()
-if not glove.use_cal_data(sel):
-    glove.calibrate()
-glove.train()
+#if not glove.use_cal_data(sel):
+#    glove.calibrate()
+#glove.train()
 
 # Setup the system
 disp = Display((1920, 1080))
@@ -54,10 +54,10 @@ track.metadata("SUBJECTINDEX", sel)
 track.setup()
 
 # write glove calibration to files
-for x, y in zip([glove.min, glove.max, glove.fist,
-                 glove.flat, glove.pen, glove.mug],
-                ['min', 'max', 'fist', 'flat', 'pen', 'mug']):
-    cPickle.dump(x, open('gloveData/subject%03d/%s' % (sel, y), 'w'))
+#for x, y in zip([glove.min, glove.max, glove.fist,
+#                 glove.flat, glove.pen, glove.mug],
+#                ['min', 'max', 'fist', 'flat', 'pen', 'mug']):
+#    cPickle.dump(x, open('gloveData/subject%03d/%s' % (sel, y), 'w'))
 
 B = trials.Break(disp, track)
 
@@ -69,7 +69,6 @@ try:
             # announce the trial to the tracker
             t['box'] = box_mapping[t['condition']]
             track.trial(i, t)
-            gloveData = []
             T = trials.InstructionImage(disp, track,
                                         "stimuli/%i.bmp" % t['image'],
                                         t['box'], t['delay'], glove,

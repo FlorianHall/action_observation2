@@ -34,8 +34,9 @@ class InstructionImage(pytrack.Trial.BasicTrial):
 
     def send_GloveData(self):
 
-        _tmp = self._glove.poll()
-        self._track.sendMessage("Glove %1.4f %1.4f %1.4f %1.4f %1.4f" % (_tmp[0], _tmp[1],_tmp[2] ,_tmp[3], _tmp[4] ))
+#        _tmp = self._glove.poll()
+#        self._track.sendMessage("Glove %1.4f %1.4f %1.4f %1.4f %1.4f" % (_tmp[0], _tmp[1],_tmp[2] ,_tmp[3], _tmp[4] ))
+        return
 
     def condition_match(self):
 
@@ -154,7 +155,7 @@ class InstructionImage(pytrack.Trial.BasicTrial):
         pygame.display.flip()
 
         self.wait_for_box()
-        self.wait_for_gesture_v3()
+#        self.wait_for_gesture_v3()
         self.start_delay()
 
         surf.blit(self._bmp, (0, 0))
